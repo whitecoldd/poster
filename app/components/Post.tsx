@@ -2,21 +2,32 @@
 
 import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-
+import axios, { AxiosError } from "axios";
+import toast from "react-hot-toast";
 const Post = () => {
   const [title, setTitle] = useState("");
   const [isDisabled, setIsDisabled] = useState(false);
+  const queryClient = useQueryClient();
+  let toastPostID: string;
 
   const { mutate } = useMutation(
     async (title: string) => await axios.post("/api/posts/addPost", { title }),
     {
       onError: (err) => {
-        console.log(err);
+        if (err instanceof AxiosError) {
+          toastPostID = toast.error(err?.response?.data.message, {
+            id: toastPostID,
+          });
+        }
+        setIsDisabled(false);
       },
       onSuccess: (data) => {
-        console.log(data);
+        toastPostID = toast.success("posted successfully", { id: toastPostID });
+        queryClient.invalidateQueries(["posts"]);
         setTitle(""), setIsDisabled(false);
+      },
+      onMutate: (load) => {
+        toastPostID = toast.loading("posting...", { id: toastPostID });
       },
     }
   );
@@ -33,7 +44,7 @@ const Post = () => {
           name="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Tell us something"
+          placeholder="tell us something"
           className="p-4 text-lg rounded-md my-2 bg-gray-200 w-full"
         />
       </div>
@@ -44,7 +55,7 @@ const Post = () => {
           }`}
         >{`${title.length}/300`}</p>
         <button
-          className="text-sm bg-cyan-400 text-white py-2 px-6 rounded-xl disabled:opacity-25"
+          className="text-sm bg-cyan-400 text-white py-2 px-4 rounded-xl disabled:opacity-25"
           type="submit"
           disabled={isDisabled}
         >

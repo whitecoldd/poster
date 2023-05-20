@@ -14,7 +14,7 @@ const Nav = async () => {
         <h1 className="font-bold text-lg">poster.</h1>
       </Link>
       <ul className="flex items-center gap-6">
-        {!session?.user && <Login />}{" "}
+        {!session?.user && <Login />}
         {session?.user && <Logged image={session.user?.image || ""} />}
       </ul>
     </nav>
