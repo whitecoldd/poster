@@ -5,7 +5,7 @@ import Post from "./components/Post";
 import { useQuery } from "@tanstack/react-query";
 import Posts from "./components/Posts";
 import Loading from "./components/Loading";
-import { PostType } from "./types/Posts";
+import { PostsType } from "./types/Posts";
 
 const posts = async () => {
   const res = await axios.get("/api/posts/getPosts");
@@ -13,7 +13,7 @@ const posts = async () => {
 };
 
 export default function Home() {
-  const { data, error, isLoading } = useQuery<PostType[]>({
+  const { data, error, isLoading } = useQuery<PostsType[]>({
     queryFn: posts,
     queryKey: ["posts"],
   });

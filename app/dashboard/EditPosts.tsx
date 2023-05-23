@@ -23,31 +23,33 @@ type EditProps = {
 const EditPosts = ({ image, name, title, comments, id }: EditProps) => {
   const [toggle, setToggle] = useState(false);
   const queryClient = useQueryClient();
-  let deleteToastID: string;
+  const [deleteToastID, setDeleteToastID] = useState("");
   const { mutate } = useMutation(
-    async (id: string) =>
-      await axios.delete("/api/posts/deletePost", { data: id }),
+    async (id: string) => await axios.delete(`/api/posts/deletePost?id=${id}`),
     {
       onError: (error) => {
         console.log(error);
-        deleteToastID = toast.error("error occured while deleting your post", {
-          id: deleteToastID,
-        });
+        setDeleteToastID(
+          toast.error("error occured while deleting your post", {
+            id: deleteToastID,
+          })
+        );
         console.log(error);
       },
       onSuccess: (data) => {
-        deleteToastID = toast.success("deleted successfully", {
-          id: deleteToastID,
-        });
+        setDeleteToastID(
+          toast.success("deleted successfully", {
+            id: deleteToastID,
+          })
+        );
         queryClient.invalidateQueries(["get-auth-posts"]);
       },
-      // onMutate: (load) => {
-      //   deleteToastID = toast.loading("deleting...", { id: deleteToastID });
-      // },
+      onMutate: (load) => {
+        setDeleteToastID(toast.loading("deleting...", { id: deleteToastID }));
+      },
     }
   );
   const onDelete = () => {
-    deleteToastID = toast.loading("deleting...", { id: deleteToastID });
     mutate(id);
   };
   return (

@@ -17,7 +17,7 @@ model Post {
   title     String
   published Boolean   @default(false)
   userId    String
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   comments  Comment[]
 }
 
