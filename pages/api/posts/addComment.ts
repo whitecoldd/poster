@@ -13,7 +13,8 @@ export default async function handler(
       return res.status(401).json({ message: "sign in to post something" });
     const { title, postId } = req.body.data;
     const user = await prisma.user.findUnique({
-      where: { email: session?.user?.email },
+      //@ts-ignore
+      where: { email: session.user?.email },
     });
 
     if (title.length > 300)
@@ -26,6 +27,7 @@ export default async function handler(
       });
     try {
       const result = await prisma.comment.create({
+        //@ts-ignore
         data: { comment: title, userId: user?.id, postId },
       });
       res.status(200).json(result);

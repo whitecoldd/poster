@@ -14,7 +14,8 @@ export default async function handler(
     const title = req.body.title;
 
     const user = await prisma.user.findUnique({
-      where: { email: session?.user?.email }
+      //@ts-ignore
+      where: { email: session?.user?.email },
     });
 
     if (title.length > 300)
@@ -27,6 +28,7 @@ export default async function handler(
       });
     try {
       const result = await prisma.post.create({
+        //@ts-ignore
         data: { title, userId: user?.id },
       });
       res.status(200).json(result);

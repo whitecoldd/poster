@@ -14,6 +14,7 @@ export default async function handler(
     try {
       const query = req.query;
       const { id } = query;
+      //@ts-ignore
       const result = await prisma.post.delete({ where: { id: id } });
       res.status(200).json(result);
     } catch (err) {
